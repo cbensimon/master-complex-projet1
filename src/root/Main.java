@@ -77,20 +77,22 @@ public class Main {
 //		tools.Values.printValues(problem.getOrderedValues());
 //		System.out.println(problem.getScore());
 		
-		System.out.println("\n=== Tree B2");
-		problem.treeSolve(new B2Heuristic());
-		tools.Values.printValues(problem.getOrderedValues());
-		System.out.println(problem.getScore());
-		
-//		System.out.println("\n=== Tree AB2CMaxBetter");
-//		problem.treeSolve(new AB2CMaxBetterHeuristic());
+//		System.out.println("\n=== Tree B2");
+//		problem.treeSolve(new B2Heuristic());
 //		tools.Values.printValues(problem.getOrderedValues());
 //		System.out.println(problem.getScore());
 		
-		System.out.println("\n=== Tree B3");
-		problem.treeSolve(new B3Heuristic());
+		System.out.println("\n=== Tree AB2CMaxBetter");
+		problem.treeSolve(new AB2CMaxBetterHeuristic());
 		tools.Values.printValues(problem.getOrderedValues());
 		System.out.println(problem.getScore());
+		
+		System.out.println("\n=== Tree B1B2");
+		problem.treeSolve(new B1B2Heuristic());
+		tools.Values.printValues(problem.getOrderedValues());
+		System.out.println(problem.getScore());
+		
+
 		
 	}
 
