@@ -9,6 +9,7 @@ public class Instance {
 	private int[][] values;
 	private int[][] orderedValues;
 	private int[] scores;
+	private int[] permutation;
 	
 	public Instance(String fileName) {
 		this.values = tools.Values.readValues(fileName);
@@ -24,6 +25,7 @@ public class Instance {
 	
 	public int treeSolve(Heuristic h) {
 		int[] p = root.Algos.exactTree(this, h);
+		this.permutation = p;
 		this.orderedValues = tools.Permutation.applyPermutation(p, values);
 		
 		return getScore();
@@ -45,4 +47,8 @@ public class Instance {
 		return this.scores[nMachines - 1];
 	}
 
+	
+	public int[] getPermutation(){
+		return this.permutation;
+	}
 }

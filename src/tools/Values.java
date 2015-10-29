@@ -38,6 +38,39 @@ public class Values {
 		return result;
 		
 	}
+	
+	public static int evalScore(int[][] values, int[] permutation) {
+		
+		int result = 0;
+
+		int nMachines = values.length;
+		int[] endDates = new int[nMachines];
+		Arrays.fill(endDates, 0);
+		
+		for (int p : permutation)
+			endDates = evalNextScore(values, p, endDates);
+		
+		result = endDates[nMachines-1];
+		return result;
+		
+	}
+	
+	public static int[] evalNextScore(int values[][], int task, int lastEndDates []){
+		
+		int[] result = new int[lastEndDates.length];
+		
+		int nMachines = lastEndDates.length;
+		
+		result[0] = lastEndDates[0] + values[0][task];
+		for (int i=1; i<nMachines; i++){
+			
+			int diff = result[i-1] - lastEndDates[i];
+			result[i] = lastEndDates[i] + values[i][task];
+			result[i] += diff>0 ? diff : 0;
+		}
+		
+		return result;
+	}
 
 //	NOT ALWAYS WORKING
 	public static int getScore(int[][] values) {
