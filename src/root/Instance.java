@@ -35,6 +35,10 @@ public class Instance {
 		return root.Algos.exactTreeMaxTime(this, h, maxTime);
 	}
 	
+	public long treeSolveCPUTime(Heuristic h) {
+		return root.Algos.exactTreeCPUTime(this, h);
+	}
+	
 	public int[][] getValues() {
 		return this.values;
 	}

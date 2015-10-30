@@ -106,6 +106,28 @@ public class Algos {
 		
 	}
 	
+	public static long exactTreeCPUTime(Instance problem, Heuristic heuristic) {
+		
+		int[][] values = problem.getValues();
+		
+		Tree.values = values;
+		Tree.N = values[0].length;
+		Tree.M = values.length;
+		Tree.nbIterations = 0;
+		Tree.scoreMin = Integer.MAX_VALUE;
+		
+		Tree t = new Tree();
+		
+		long tBefore = System.nanoTime();
+		Tree bestLeaf = buildTree2(t, values, heuristic, -1);
+		long tAfter = System.nanoTime();
+		
+		problem.setScores(bestLeaf.getScores());
+		
+		return tAfter - tBefore;
+		
+	}
+	
 //	private static Tree buildTree(Tree parent, int[][] values, Heuristic heuristic) {
 //		
 //		Tree.nbIterations++;
