@@ -39,7 +39,32 @@ public class Values {
 		
 	}
 	
-	public static int evalScore(int[][] values, int[] permutation) {
+	public static int evalScore(int[][] orderedValues){
+		
+		int result = 0;
+		
+		int nMachines = orderedValues.length;
+		int nTasks = orderedValues[0].length;
+		int[] endDates = new int[nMachines];
+		Arrays.fill(endDates, 0);
+		
+
+		for (int i=0; i<nTasks; i++){
+			endDates[0] += orderedValues[0][i];
+			for(int m=1; m<nMachines; m++){
+				int diff = endDates[m-1] - endDates[m];
+				endDates[m] += orderedValues[m][i];
+				endDates[m] += diff > 0 ? diff : 0;
+			}
+			
+		}
+				
+		result = endDates[nMachines-1];
+		return result;
+		
+	}
+	
+	public static int evalScore2(int[][] values, int[] permutation) {
 		
 		int result = 0;
 
@@ -60,7 +85,6 @@ public class Values {
 		int[] result = new int[lastEndDates.length];
 		
 		int nMachines = lastEndDates.length;
-		
 		result[0] = lastEndDates[0] + values[0][task];
 		for (int i=1; i<nMachines; i++){
 			

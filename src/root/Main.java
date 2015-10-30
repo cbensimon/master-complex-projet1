@@ -91,9 +91,9 @@ public class Main {
 		int score = problem.getScore();
 		
 
-		int[] permutation = problem.getPermutation();
-		int Escore = Values.evalScore(values, permutation);
-		System.out.println("\nEtienne Score : "+Escore + " Real Score : "+score);
+		int[][] permutation = problem.getOrderedValues();
+		int Escore = Values.evalScore(permutation);
+		System.out.println("\nEtienne Score : "+Escore + "\nReal Score : "+score);
 		
 		
 		
@@ -102,9 +102,9 @@ public class Main {
 		tools.Values.printValues(problem.getOrderedValues());
 		score = problem.getScore();
 
-		System.out.println("\nEtienne Score : "+Escore + " Real Score : "+score);
-		permutation = problem.getPermutation();
-		Escore = Values.evalScore(values, permutation);
+		System.out.println("\nEtienne Score : "+Escore + "\nReal Score : "+score);
+		permutation = problem.getOrderedValues();
+		Escore = Values.evalScore(permutation);
 		
 		System.out.println("\n=== Begin Test For Etienne Score===\n");
 		int it = 1024;
@@ -114,8 +114,8 @@ public class Main {
 			problem.treeSolve(new B1B2Heuristic());
 			score = problem.getScore();
 			
-			permutation = problem.getPermutation();
-			Escore = Values.evalScore(problem.getValues(), permutation);
+			permutation = problem.getOrderedValues();
+			Escore = Values.evalScore(permutation);
 			
 			it--;
 		}
