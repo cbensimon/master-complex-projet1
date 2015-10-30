@@ -14,22 +14,22 @@ public class MainEvaluation {
 		int nbInstances = 50;
 		int maxDuration = 30; //in seconds
 		
-		int[][][][] uncorrelatedSet = new int[dMax][nbInstances][][];
-		int[][][][] correlatedOnTasksSet = new int[dMax][nbInstances][][];
-		int[][][][] correlatedOnMachinesSet = new int[dMax][nbInstances][][];
+		int[][][][] uncorrelatedSet = new int[nbInstances][dMax][][];
+		int[][][][] correlatedOnTasksSet = new int[nbInstances][dMax][][];
+		int[][][][] correlatedOnMachinesSet = new int[nbInstances][dMax][][];
 		
-		for (int d=dMin ; d<dMax ; d++) {
-			for (int i=0 ; i<nbInstances ; i++) {
-				uncorrelatedSet[d][i] = tools.Generators.uncorrelated(nMachines, i, 0, 100);
-				correlatedOnTasksSet[d][i] = tools.Generators.correlatedOnTasks(nMachines, i);
-				correlatedOnMachinesSet[d][i] = tools.Generators.correlatedOnMachines(nMachines, i);
+		for (int i=0 ; i<nbInstances ; i++) {
+			for (int d=dMin ; d<dMax ; d++) {
+				uncorrelatedSet[i][d] = tools.Generators.uncorrelated(nMachines, i, 0, 100);
+				correlatedOnTasksSet[i][d] = tools.Generators.correlatedOnTasks(nMachines, i);
+				correlatedOnMachinesSet[i][d] = tools.Generators.correlatedOnMachines(nMachines, i);
 			}
 		}
 		
 		LinkedList<Heuristic> heuristics = new LinkedList<Heuristic>();
-		HashMap<Heuristic, float[]> uncorrelatedResults = new HashMap<Heuristic, float[]>();
-		HashMap<Heuristic, float[]> correlatedOnTasksResults = new HashMap<Heuristic, float[]>();
-		HashMap<Heuristic, float[]> correlatedOnMachinesResults = new HashMap<Heuristic, float[]>();
+		HashMap<Heuristic, Float> uncorrelatedResults = new HashMap<Heuristic, Float>();
+		HashMap<Heuristic, Float> correlatedOnTasksResults = new HashMap<Heuristic, Float>();
+		HashMap<Heuristic, Float> correlatedOnMachinesResults = new HashMap<Heuristic, Float>();
 		
 		heuristics.add(new NaifHeuristic());
 		heuristics.add(new ABCMaxHeuristic());
@@ -38,37 +38,52 @@ public class MainEvaluation {
 		
 		for (Heuristic h : heuristics) {
 			
-			float[] uncorrelatedResult = new float[dMax];
-			float[] correlatedOnTasksResult = new float[dMax];
-			float[] correlatedOnMachinesResult = new float[dMax];
+			float[] uncorrelatedResultsH = new float[nbInstances];
+			float[] correlatedOnTasksResultsH = new float[nbInstances];
+			float[] correlatedOnMachinesResultsH = new float[nbInstances];
 			
-			for (int d=dMin ; d<dMax ; d++) {
+			for (int i=0 ; i<nbInstances ; i++) {
 
-				for (int i=0 ; i<nbInstances ; i++) {
+				uncorrelatedResultsH[i] = dMin - 1;
+				correlatedOnTasksResultsH[i] = dMin - 1;
+				correlatedOnMachinesResultsH[i] = dMin - 1;
+
+				for (int d=dMin ; d<dMax ; d++) {
 					
-					Instance uncorrelatedProblem = new Instance(uncorrelatedSet[d][i]);
-					Instance correlatedOnTasksProblem = new Instance(correlatedOnTasksSet[d][i]);
-					Instance correlatedOnMachinesProblem = new Instance(correlatedOnMachinesSet[d][i]);
+					Instance uncorrelatedProblem = new Instance(uncorrelatedSet[i][d]);
+					Instance correlatedOnTasksProblem = new Instance(correlatedOnTasksSet[i][d]);
+					Instance correlatedOnMachinesProblem = new Instance(correlatedOnMachinesSet[i][d]);
 					
-					uncorrelatedResult[d] += uncorrelatedProblem.treeSolve(h);
-					correlatedOnTasksResult[d] += correlatedOnTasksProblem.treeSolve(h);
-					correlatedOnMachinesResult[d] += correlatedOnMachinesProblem.treeSolve(h);
+					if (uncorrelatedResultsH[i] == d-1)
+						if (uncorrelatedProblem.treeSolveMaxTime(h, maxDuration))
+							uncorrelatedResultsH[i] = d;
+
+					if (correlatedOnTasksResultsH[i] == d-1)
+						if (correlatedOnTasksProblem.treeSolveMaxTime(h, maxDuration))
+							correlatedOnTasksResultsH[i] = d;
+
+					if (correlatedOnMachinesResultsH[i] == d-1)
+						if (correlatedOnMachinesProblem.treeSolveMaxTime(h, maxDuration))
+							correlatedOnMachinesResultsH[i] = d;
 					
 				}
-
-				uncorrelatedResult[d] /= (float)nbInstances;
-				correlatedOnTasksResult[d] /= (float)nbInstances;
-				correlatedOnMachinesResult[d] /= (float)nbInstances;
 			}
 			
 			System.out.println("Heuristic " + h.getClass().getName());
 			
-			uncorrelatedResults.put(h, uncorrelatedResult);
-			correlatedOnTasksResults.put(h, correlatedOnTasksResult);
-			correlatedOnMachinesResults.put(h, correlatedOnMachinesResult);
+			uncorrelatedResults.put(h, mean(uncorrelatedResultsH));
+			correlatedOnTasksResults.put(h, mean(correlatedOnTasksResultsH));
+			correlatedOnMachinesResults.put(h, mean(correlatedOnMachinesResultsH));
 			
 		}
 
+	}
+
+	private static float mean(float[] values) {
+		float result = 0;
+		for (float value : values)
+			result += value;
+		return result / values.length;
 	}
 
 }
