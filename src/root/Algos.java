@@ -1,5 +1,7 @@
 package root;
 import heuristic.Heuristic;
+
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -72,12 +74,35 @@ public class Algos {
 		Tree.scoreMin = Integer.MAX_VALUE;
 		
 		Tree t = new Tree();
-		Tree bestLeaf = buildTree2(t, values, heuristic);
+		Tree bestLeaf = buildTree2(t, values, heuristic, -1);
 		
 		problem.setScores(bestLeaf.getScores());
 		
 		System.out.println("Found in "+ Tree.nbIterations +" iterations");
 		return bestLeaf.getPermutation();
+		
+	}
+	
+	public static boolean exactTreeMaxTime(Instance problem, Heuristic heuristic, int maxTime) {
+		
+		int[][] values = problem.getValues();
+		
+		Tree.values = values;
+		Tree.N = values[0].length;
+		Tree.M = values.length;
+		Tree.nbIterations = 0;
+		Tree.scoreMin = Integer.MAX_VALUE;
+		
+		int maxSeconds = (int)(new Date().getTime() / 1000) + maxTime;
+		Tree t = new Tree();
+		Tree bestLeaf = buildTree2(t, values, heuristic, maxSeconds);
+		
+		if (bestLeaf.stop)
+			return false;
+		
+		problem.setScores(bestLeaf.getScores());
+		
+		return true;
 		
 	}
 	
@@ -113,9 +138,18 @@ public class Algos {
 //		return result;
 //	}
 	
-	private static Tree buildTree2(Tree node, int[][] values, Heuristic heuristic) {
+	private static Tree buildTree2(Tree node, int[][] values, Heuristic heuristic, int maxSeconds) {
 
 		Tree.nbIterations++;
+		
+		if (maxSeconds != -1) {
+			int currentSeconds = (int) (new Date().getTime() / 1000);
+			if (currentSeconds > maxSeconds) {
+				Tree result = new Tree();
+				result.stop = true;
+				return result;
+			}
+		}
 		
 		int score = node.getScore();
 		
@@ -133,7 +167,9 @@ public class Algos {
 		for (int p : childrenPermutation) {
 			int[] permutation = node.getNextPermutation(p);
 			Tree child = new Tree(permutation, node);
-			Tree childResult = buildTree2(child, values, heuristic);
+			Tree childResult = buildTree2(child, values, heuristic, maxSeconds);
+			if (childResult != null && childResult.stop)
+				return childResult;
 			if (result == null || (childResult != null && childResult.getScore() < result.getScore()))
 				result = childResult;
 		}

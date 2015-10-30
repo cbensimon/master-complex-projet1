@@ -13,6 +13,7 @@ public class Tree {
 	private int score;
 	private int[] scores;
 	private Tree parent;
+	public boolean stop = false;
 	
 	public Tree() {
 		this.permutation = new int[0];
