@@ -31,7 +31,7 @@ public class Instance {
 		return getScore();
 	}
 	
-	public boolean treeSolveMaxTime(Heuristic h, int maxTime) {
+	public boolean treeSolveMaxTime(Heuristic h, long maxTime) {
 		return root.Algos.exactTreeMaxTime(this, h, maxTime);
 	}
 	

@@ -83,7 +83,7 @@ public class Algos {
 		
 	}
 	
-	public static boolean exactTreeMaxTime(Instance problem, Heuristic heuristic, int maxTime) {
+	public static boolean exactTreeMaxTime(Instance problem, Heuristic heuristic, long maxTime) {
 		
 		int[][] values = problem.getValues();
 		
@@ -93,9 +93,9 @@ public class Algos {
 		Tree.nbIterations = 0;
 		Tree.scoreMin = Integer.MAX_VALUE;
 		
-		int maxSeconds = (int)(new Date().getTime() / 1000) + maxTime;
+		long maxMilliseconds = new Date().getTime() + maxTime;
 		Tree t = new Tree();
-		Tree bestLeaf = buildTree2(t, values, heuristic, maxSeconds);
+		Tree bestLeaf = buildTree2(t, values, heuristic, maxMilliseconds);
 		
 		if (bestLeaf.stop)
 			return false;
@@ -138,13 +138,13 @@ public class Algos {
 //		return result;
 //	}
 	
-	private static Tree buildTree2(Tree node, int[][] values, Heuristic heuristic, int maxSeconds) {
+	private static Tree buildTree2(Tree node, int[][] values, Heuristic heuristic, long maxMilliseconds) {
 
 		Tree.nbIterations++;
 		
-		if (maxSeconds != -1) {
-			int currentSeconds = (int) (new Date().getTime() / 1000);
-			if (currentSeconds > maxSeconds) {
+		if (maxMilliseconds != -1) {
+			long currentMilliseconds = new Date().getTime();
+			if (currentMilliseconds > maxMilliseconds) {
 				Tree result = new Tree();
 				result.stop = true;
 				return result;
@@ -167,7 +167,7 @@ public class Algos {
 		for (int p : childrenPermutation) {
 			int[] permutation = node.getNextPermutation(p);
 			Tree child = new Tree(permutation, node);
-			Tree childResult = buildTree2(child, values, heuristic, maxSeconds);
+			Tree childResult = buildTree2(child, values, heuristic, maxMilliseconds);
 			if (childResult != null && childResult.stop)
 				return childResult;
 			if (result == null || (childResult != null && childResult.getScore() < result.getScore()))
