@@ -11,8 +11,8 @@ public class MainEvaluation {
 		
 		int dMin = 2, dMax = 1000;
 		int nMachines = 3;
-		int nbInstances = 10;
-		int maxDuration = 1; //in seconds
+		int nbInstances = 30;
+		int maxDuration = 2000; //in milliseconds
 		
 		int[][][][] uncorrelatedSet = new int[nbInstances][dMax][][];
 		int[][][][] correlatedOnTasksSet = new int[nbInstances][dMax][][];
