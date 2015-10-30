@@ -115,7 +115,7 @@ public class Main {
 			score = problem.getScore();
 			
 			permutation = problem.getPermutation();
-			Escore = Values.evalScore(values, permutation);
+			Escore = Values.evalScore(problem.getValues(), permutation);
 			
 			it--;
 		}
