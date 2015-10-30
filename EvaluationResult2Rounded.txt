@@ -1,0 +1,9 @@
+int dMin = 2, dMax = 1000;
+int nMachines = 3;
+int nbInstances = 30;
+int maxDuration = 2000;
+
+heuristic.B1B2Heuristic :			(15.8, 13.5, 74.2)
+heuristic.ABCMaxBetterHeuristic :	(15.8, 11.1, 77.3)
+heuristic.ABCMaxHeuristic :			(15.8, 11.1, 77.3)
+heuristic.NaifHeuristic :			(10.0, 10.0, 10.0)
