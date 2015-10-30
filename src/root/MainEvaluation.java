@@ -9,10 +9,10 @@ public class MainEvaluation {
 
 	public static void main(String[] args) {
 		
-		int dMin = 2, dMax = 100;
+		int dMin = 2, dMax = 1000;
 		int nMachines = 3;
-		int nbInstances = 50;
-		int maxDuration = 30; //in seconds
+		int nbInstances = 10;
+		int maxDuration = 1; //in seconds
 		
 		int[][][][] uncorrelatedSet = new int[nbInstances][dMax][][];
 		int[][][][] correlatedOnTasksSet = new int[nbInstances][dMax][][];
@@ -20,9 +20,9 @@ public class MainEvaluation {
 		
 		for (int i=0 ; i<nbInstances ; i++) {
 			for (int d=dMin ; d<dMax ; d++) {
-				uncorrelatedSet[i][d] = tools.Generators.uncorrelated(nMachines, i, 0, 100);
-				correlatedOnTasksSet[i][d] = tools.Generators.correlatedOnTasks(nMachines, i);
-				correlatedOnMachinesSet[i][d] = tools.Generators.correlatedOnMachines(nMachines, i);
+				uncorrelatedSet[i][d] = tools.Generators.uncorrelated(nMachines, d, 0, 100);
+				correlatedOnTasksSet[i][d] = tools.Generators.correlatedOnTasks(nMachines, d);
+				correlatedOnMachinesSet[i][d] = tools.Generators.correlatedOnMachines(nMachines, d);
 			}
 		}
 		
@@ -31,18 +31,22 @@ public class MainEvaluation {
 		HashMap<Heuristic, Float> correlatedOnTasksResults = new HashMap<Heuristic, Float>();
 		HashMap<Heuristic, Float> correlatedOnMachinesResults = new HashMap<Heuristic, Float>();
 		
-		heuristics.add(new NaifHeuristic());
-		heuristics.add(new ABCMaxHeuristic());
-		heuristics.add(new ABCMaxBetterHeuristic());
 		heuristics.add(new B1B2Heuristic());
+		heuristics.add(new ABCMaxBetterHeuristic());
+		heuristics.add(new ABCMaxHeuristic());
+		heuristics.add(new NaifHeuristic());
 		
 		for (Heuristic h : heuristics) {
+			
+			System.out.println("=== HEURISTIC "+ h.getClass().getName() +" ===");
 			
 			float[] uncorrelatedResultsH = new float[nbInstances];
 			float[] correlatedOnTasksResultsH = new float[nbInstances];
 			float[] correlatedOnMachinesResultsH = new float[nbInstances];
 			
 			for (int i=0 ; i<nbInstances ; i++) {
+				
+				System.out.println("=== INSTANCE "+ i +" ===");
 
 				uncorrelatedResultsH[i] = dMin - 1;
 				correlatedOnTasksResultsH[i] = dMin - 1;
@@ -54,27 +58,53 @@ public class MainEvaluation {
 					Instance correlatedOnTasksProblem = new Instance(correlatedOnTasksSet[i][d]);
 					Instance correlatedOnMachinesProblem = new Instance(correlatedOnMachinesSet[i][d]);
 					
-					if (uncorrelatedResultsH[i] == d-1)
-						if (uncorrelatedProblem.treeSolveMaxTime(h, maxDuration))
+					if (uncorrelatedResultsH[i] == d-1) {
+						System.out.print("uncorrelated    \t"+ d +" ... ");
+						if (uncorrelatedProblem.treeSolveMaxTime(h, maxDuration)) {
+							System.out.println("OK");
 							uncorrelatedResultsH[i] = d;
+						} else {
+							System.out.println("MaxTime");
+						}
+					}
 
-					if (correlatedOnTasksResultsH[i] == d-1)
-						if (correlatedOnTasksProblem.treeSolveMaxTime(h, maxDuration))
+					if (correlatedOnTasksResultsH[i] == d-1) {
+						System.out.print("correlatedOnTasks\t"+ d +" ... ");
+						if (correlatedOnTasksProblem.treeSolveMaxTime(h, maxDuration)) {
+							System.out.println("OK");
 							correlatedOnTasksResultsH[i] = d;
+						} else {
+							System.out.println("MaxTime");
+						}
+					}
 
-					if (correlatedOnMachinesResultsH[i] == d-1)
-						if (correlatedOnMachinesProblem.treeSolveMaxTime(h, maxDuration))
+					if (correlatedOnMachinesResultsH[i] == d-1) {
+						System.out.print("correlatedOnMachines\t"+ d +" ... ");
+						if (correlatedOnMachinesProblem.treeSolveMaxTime(h, maxDuration)) {
+							System.out.println("OK");
 							correlatedOnMachinesResultsH[i] = d;
-					
+						} else {
+							System.out.println("MaxTime");
+						}
+					}
+
 				}
 			}
-			
-			System.out.println("Heuristic " + h.getClass().getName());
 			
 			uncorrelatedResults.put(h, mean(uncorrelatedResultsH));
 			correlatedOnTasksResults.put(h, mean(correlatedOnTasksResultsH));
 			correlatedOnMachinesResults.put(h, mean(correlatedOnMachinesResultsH));
 			
+		}
+		
+		System.out.println("=== RESULTS ===");
+		
+		for (Heuristic h : heuristics) {
+			String score = "(";
+			score += uncorrelatedResults.get(h) +", ";
+			score += correlatedOnTasksResults.get(h) +", ";
+			score += correlatedOnMachinesResults.get(h) +")";
+			System.out.println(h.getClass().getName() +" : "+ score);
 		}
 
 	}
